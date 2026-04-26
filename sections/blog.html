@@ -1,0 +1,33 @@
+<section id="blog">
+  <div style="margin-bottom:3rem;" class="reveal">
+    <span class="section-label">// Insights</span>
+    <h2 class="section-title">Latest Articles</h2>
+    <p class="section-subtitle">Sharing knowledge on Android development, AI, performance optimization, and mobile engineering best practices.</p>
+  </div>
+
+  <div class="blog-grid">
+    <div class="blog-card reveal">
+      <div class="blog-top"></div>
+      <div class="blog-body">
+        <span class="blog-tag">AI & Productivity</span>
+        <div class="blog-title">You're Using AI — Are You Using It Right?</div>
+        <div class="blog-desc">Most people treat AI like a magic answer machine. Here's what 6+ years of integrating AI into engineering workflows taught me about using it intentionally — and the trap to avoid.</div>
+        <div class="blog-meta">
+          <span class="blog-date">Recently published</span>
+          <button class="blog-read" onclick="openBlogModal('ai-right')">Read more →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Blog Modal -->
+<div class="blog-modal" id="blogModal">
+  <div class="blog-modal-content">
+    <button class="blog-modal-close" onclick="closeBlogModal()">✕</button>
+    <span class="blog-modal-tag" id="modalTag"></span>
+    <h2 class="blog-modal-title" id="modalTitle"></h2>
+    <div class="blog-modal-meta" id="modalMeta"></div>
+    <div class="blog-modal-body" id="modalBody"></div>
+  </div>
+</div>
