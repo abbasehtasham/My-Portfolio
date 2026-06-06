@@ -30,6 +30,9 @@ async function loadSection(id, file) {
 
 async function loadAllSections() {
   await Promise.all(sectionsToLoad.map(s => loadSection(s.id, s.file)));
+  // Hydrate dynamic sections
+  if (typeof renderFeaturedBlogs === 'function') renderFeaturedBlogs();
+  if (typeof renderFeaturedProjects === 'function') renderFeaturedProjects();
   // Re-init scroll reveal after sections are loaded
   if (typeof initRevealObserver === 'function') initRevealObserver();
 }

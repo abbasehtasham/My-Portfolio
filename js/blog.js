@@ -1,61 +1,153 @@
 // ============================================
-// BLOG MODAL
+// BLOG + PROJECTS RENDERING
+// Data lives in js/data.js
 // ============================================
 
-const BLOG_POSTS = {
-  'ai-right': {
-    tag: 'AI & Productivity',
-    title: "You're Using AI — Are You Using It Right?",
-    date: 'Recently published',
-    body: `
-      <p>AI tools are everywhere. ChatGPT, Claude, Copilot, Gemini — every developer, designer, writer, and student now has a powerful assistant a click away. But here's the question almost no one is honestly asking themselves:</p>
-      <p><strong>Are you actually using AI right, or just using it?</strong></p>
-      <img src="images/blogs/agentai_1.svg" alt="AI Tools Overview" class="blog-modal-img" />
-      <h3>The Lazy Way vs The Smart Way</h3>
-      <p>Most people treat AI like a magic answer machine. They type a vague question, accept whatever comes out, and ship it. The result? Mediocre output, recycled ideas, and a slow erosion of their own thinking muscles.</p>
-      <p>The smart way is different. The smart way uses AI as a thinking partner — a tireless collaborator that helps you sharpen ideas, explore alternatives, and accelerate execution. The output is still <em>yours</em>, but better.</p>
-      <h3>What I've Learned After Using AI Daily</h3>
-      <p>As an Android engineer who has been integrating AI into my daily workflow for over a year, here are the patterns that actually work:</p>
-      <p><strong>1. Be specific about context.</strong> "Write me a function" gets garbage. "Write me a Kotlin function using coroutines and Retrofit2 that fetches user profiles, with retry logic and proper error handling for our MVVM ViewModel" gets gold.</p>
-      <p><strong>2. Iterate, don't accept the first answer.</strong> The first response is rarely the best. Push back. Ask "what's a cleaner way?" or "what edge cases am I missing?" The second and third iterations are where the real value lives.</p>
-      <p><strong>3. Use AI to challenge your thinking, not replace it.</strong> Before I write a complex feature, I describe my plan to AI and ask it to poke holes in it. Half the time, it catches something I missed. The other half, defending my approach makes my thinking sharper.</p>
-      <p><strong>4. Keep your own voice.</strong> If you blog, write code comments, or send proposals — the moment your work sounds like AI, it loses trust. Use AI for structure and ideas, but rewrite in your voice.</p>
-      <img src="images/blogs/agentai_2.svg" alt="AI Workflow" class="blog-modal-img" />
-      <h3>The Trap to Avoid</h3>
-      <p>The biggest danger isn't AI making mistakes — it's AI making you complacent. If you stop reading docs because AI summarizes them, stop debugging because AI suggests fixes, stop thinking because AI thinks for you — you're not getting more productive. You're getting dependent.</p>
-      <p>The developers who will dominate the next decade aren't the ones who use AI the most. They're the ones who use it <em>most intentionally</em>.</p>
-      <h3>Final Thought</h3>
-      <p>AI is a power tool. Power tools don't make you a craftsman — knowing when, where, and how to use them does. Get good at the question, the iteration, the judgment. The tool is just the tool.</p>
-      <p>So — are you using AI, or are you using it right?</p>
-    `
+function blogCardHTML(slug, post) {
+  return `
+    <a class="blog-card reveal" href="post.html?slug=${slug}">
+      <div class="blog-top"></div>
+      ${post.cover ? `<div class="blog-cover"><img src="${post.cover}" alt="${post.title}" /></div>` : ''}
+      <div class="blog-body">
+        <span class="blog-tag">${post.tag}</span>
+        <div class="blog-title">${post.title}</div>
+        <div class="blog-desc">${post.excerpt || ''}</div>
+        <div class="blog-meta">
+          <span class="blog-date">${post.date}</span>
+          <span class="blog-read">Read more →</span>
+        </div>
+      </div>
+    </a>`;
+}
+
+function projectCardHTML(slug, p) {
+  return `
+    <div class="project-card reveal" data-cat="${p.cat}">
+      <a class="project-link-wrap" href="project.html?slug=${slug}">
+        <div class="project-banner">
+          <img src="${p.image}" alt="${p.title}" />
+        </div>
+        <div class="project-body">
+          <div class="project-type">${p.type}</div>
+          <div class="project-title">${p.title}</div>
+          <div class="project-desc">${p.desc}</div>
+          <div class="project-footer">
+            <span class="project-link">View Details →</span>
+            <span class="play-badge">${p.badge}</span>
+          </div>
+        </div>
+      </a>
+    </div>`;
+}
+
+// Render featured posts on home blog section
+function renderFeaturedBlogs() {
+  const grid = document.querySelector('#blog .blog-grid');
+  if (!grid) return;
+  grid.innerHTML = FEATURED_POST_SLUGS
+    .map(slug => blogCardHTML(slug, BLOG_POSTS[slug]))
+    .filter(Boolean)
+    .join('');
+}
+
+// Render featured projects on home projects section
+function renderFeaturedProjects() {
+  const grid = document.querySelector('#projects .projects-grid');
+  if (!grid) return;
+  grid.innerHTML = FEATURED_PROJECT_SLUGS
+    .map(slug => PROJECTS[slug] ? projectCardHTML(slug, PROJECTS[slug]) : '')
+    .join('');
+}
+
+// Render full blog listing (blogs.html)
+function renderAllBlogs() {
+  const grid = document.getElementById('all-blogs-grid');
+  if (!grid) return;
+  grid.innerHTML = Object.entries(BLOG_POSTS)
+    .map(([slug, post]) => blogCardHTML(slug, post))
+    .join('');
+}
+
+// Render full projects listing (projects.html)
+function renderAllProjects() {
+  const grid = document.getElementById('all-projects-grid');
+  if (!grid) return;
+  grid.innerHTML = Object.entries(PROJECTS)
+    .map(([slug, p]) => projectCardHTML(slug, p))
+    .join('');
+}
+
+function getSlugFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('slug');
+}
+
+// Render single post page (post.html)
+function renderSinglePost() {
+  const root = document.getElementById('post-root');
+  if (!root) return;
+  const slug = getSlugFromURL();
+  const post = BLOG_POSTS[slug];
+  if (!post) {
+    root.innerHTML = `<div class="page-empty"><h2>Post not found</h2><a class="btn-secondary" href="blogs.html">← Back to all posts</a></div>`;
+    return;
   }
-};
-
-function openBlogModal(postId) {
-  const post = BLOG_POSTS[postId];
-  if (!post) return;
-  
-  const modal = document.getElementById('blogModal');
-  document.getElementById('modalTag').textContent = post.tag;
-  document.getElementById('modalTitle').textContent = post.title;
-  document.getElementById('modalMeta').textContent = post.date;
-  document.getElementById('modalBody').innerHTML = post.body;
-  modal.classList.add('open');
-  document.body.style.overflow = 'hidden';
+  document.title = `${post.title} — Ehtasham Abbas`;
+  root.innerHTML = `
+    <a class="page-back" href="blogs.html">← All Posts</a>
+    <span class="post-tag">${post.tag}</span>
+    <h1 class="post-title">${post.title}</h1>
+    <div class="post-meta">${post.date} · 5 min read</div>
+    <div class="post-body">${post.body}</div>
+    <div class="post-footer">
+      <a class="btn-secondary" href="blogs.html">← All Posts</a>
+      <a class="btn-primary" href="index.html#contact">Get in Touch</a>
+    </div>`;
 }
 
-function closeBlogModal() {
-  document.getElementById('blogModal').classList.remove('open');
-  document.body.style.overflow = '';
+// Render single project page (project.html)
+function renderSingleProject() {
+  const root = document.getElementById('project-root');
+  if (!root) return;
+  const slug = getSlugFromURL();
+  const p = PROJECTS[slug];
+  if (!p) {
+    root.innerHTML = `<div class="page-empty"><h2>Project not found</h2><a class="btn-secondary" href="projects.html">← Back to all projects</a></div>`;
+    return;
+  }
+  document.title = `${p.title} — Ehtasham Abbas`;
+  const playBtn = p.playStore && p.playStore !== '#'
+    ? `<a class="btn-primary" href="${p.playStore}" target="_blank" rel="noopener">View on Play Store →</a>`
+    : '';
+  root.innerHTML = `
+    <a class="page-back" href="projects.html">← All Projects</a>
+    <div class="project-hero">
+      <div class="project-hero-img"><img src="${p.image}" alt="${p.title}" /></div>
+      <div class="project-hero-info">
+        <span class="post-tag">${p.type}</span>
+        <h1 class="post-title">${p.title}</h1>
+        <p class="project-hero-desc">${p.desc}</p>
+        <div class="project-hero-actions">
+          ${playBtn}
+          <a class="btn-secondary" href="projects.html">More Projects</a>
+        </div>
+      </div>
+    </div>
+    ${p.about ? `<section class="project-block"><h3>About the Project</h3><p>${p.about}</p></section>` : ''}
+    ${p.stack ? `<section class="project-block"><h3>Tech Stack</h3><div class="project-tags">${p.stack.map(s => `<span class="tag">${s}</span>`).join('')}</div></section>` : ''}
+    ${p.highlights ? `<section class="project-block"><h3>Highlights</h3><ul class="project-highlights">${p.highlights.map(h => `<li>${h}</li>`).join('')}</ul></section>` : ''}
+    <div class="post-footer">
+      <a class="btn-secondary" href="projects.html">← All Projects</a>
+      <a class="btn-primary" href="index.html#contact">Get in Touch</a>
+    </div>`;
 }
 
-// Close on background click
-document.addEventListener('click', (e) => {
-  const modal = document.getElementById('blogModal');
-  if (e.target === modal) closeBlogModal();
-});
-
-// Close on ESC
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeBlogModal();
+// Auto-bootstrap
+document.addEventListener('DOMContentLoaded', () => {
+  renderSinglePost();
+  renderSingleProject();
+  renderAllBlogs();
+  renderAllProjects();
+  // Reveal injected cards (standalone pages have no loader.js to do this)
+  if (typeof initRevealObserver === 'function') initRevealObserver();
 });

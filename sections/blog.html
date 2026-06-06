@@ -6,28 +6,10 @@
   </div>
 
   <div class="blog-grid">
-    <div class="blog-card reveal">
-      <div class="blog-top"></div>
-      <div class="blog-body">
-        <span class="blog-tag">AI & Productivity</span>
-        <div class="blog-title">You're Using AI — Are You Using It Right?</div>
-        <div class="blog-desc">Most people treat AI like a magic answer machine. Here's what 6+ years of integrating AI into engineering workflows taught me about using it intentionally — and the trap to avoid.</div>
-        <div class="blog-meta">
-          <span class="blog-date">Recently published</span>
-          <button class="blog-read" onclick="openBlogModal('ai-right')">Read more →</button>
-        </div>
-      </div>
-    </div>
+    <!-- Cards injected by js/blog.js → renderFeaturedBlogs() -->
+  </div>
+
+  <div class="see-more-row reveal">
+    <a class="btn-secondary" href="blogs.html">See All Posts →</a>
   </div>
 </section>
-
-<!-- Blog Modal -->
-<div class="blog-modal" id="blogModal">
-  <div class="blog-modal-content">
-    <button class="blog-modal-close" onclick="closeBlogModal()">✕</button>
-    <span class="blog-modal-tag" id="modalTag"></span>
-    <h2 class="blog-modal-title" id="modalTitle"></h2>
-    <div class="blog-modal-meta" id="modalMeta"></div>
-    <div class="blog-modal-body" id="modalBody"></div>
-  </div>
-</div>
